@@ -1,12 +1,24 @@
-// ====== Test Suite ======
+// ====== Calendar Application Test Suite ======
+// This file contains test cases for the calendar application functionality
+
+/**
+ * Main test runner function that executes all test groups
+ * Expected output: 
+ * - Logs "=== Running Calendar Application Tests ===" at start
+ * - Logs each test group's results
+ * - Logs "=== ALL TESTS PASSED ===" if all succeed
+ * - Logs error message if any test fails
+ * - Restores original application state when finished
+ */
 function runTests() {
     console.log("=== Running Calendar Application Tests ===");
     
-    // Store original bookings to restore later
+    // Store original state to restore after tests
     const originalBookings = [...bookings];
     const originalLocalStorage = localStorage.getItem("save");
     
     try {
+      // Execute test groups
       testInitialization();
       testDateNavigation();
       testBookingFunctionality();
@@ -17,7 +29,7 @@ function runTests() {
       console.error("=== TEST FAILED ===");
       console.error(error);
     } finally {
-      // Restore original state
+      // Cleanup: Restore original state
       bookings = originalBookings;
       if (originalLocalStorage) {
         localStorage.setItem("save", originalLocalStorage);
@@ -25,20 +37,30 @@ function runTests() {
         localStorage.removeItem("save");
       }
       
-      // Refresh the calendar
+      // Refresh calendar display
       clearCalendarRows(tableBody);
       fillCalendarNums(tableBody, currentYear, currentMonth);
     }
   }
   
+  /**
+   * Tests calendar initialization
+   * Verifies:
+   * 1. Header displays current month/year correctly
+   * 2. Month dropdown is set to current month
+   * 3. Year input is set to current year
+   * Expected output:
+   * - "Initialization tests passed" if all checks succeed
+   * - Error message if any check fails
+   */
   function testInitialization() {
     console.group("Testing Initialization");
     
-    // Test current month/year display
     const currentDate = new Date();
     const expectedMonth = months[currentDate.getMonth()];
     const expectedYear = currentDate.getFullYear();
     
+    // Test header display
     const headerText = document.getElementById("month_name_display").textContent;
     if (!headerText.includes(expectedMonth)) {
       throw new Error(`Initial month display failed. Expected ${expectedMonth}, got ${headerText}`);
@@ -63,10 +85,19 @@ function runTests() {
     console.groupEnd();
   }
   
+  /**
+   * Tests month/year navigation functionality
+   * Verifies:
+   * 1. Calendar updates correctly when changing to January 2023
+   * 2. Calendar updates correctly when changing to December 2025
+   * Expected output:
+   * - "Date navigation tests passed" if both changes work
+   * - Error message if any navigation fails
+   */
   function testDateNavigation() {
     console.group("Testing Date Navigation");
     
-    // Test changing to January 2023
+    // Test navigation to January 2023
     document.getElementById("month_name_dropdown").selectedIndex = 0;
     document.getElementById("input_year").value = 2023;
     document.getElementById("submit_date").click();
@@ -76,7 +107,7 @@ function runTests() {
       throw new Error(`Date navigation failed. Expected "January, 2023", got "${headerText}"`);
     }
     
-    // Test changing to December 2025
+    // Test navigation to December 2025
     document.getElementById("month_name_dropdown").selectedIndex = 11;
     document.getElementById("input_year").value = 2025;
     document.getElementById("submit_date").click();
@@ -90,16 +121,26 @@ function runTests() {
     console.groupEnd();
   }
   
+  /**
+   * Tests booking functionality
+   * Verifies:
+   * 1. Can add a booking to a date cell
+   * 2. Duplicate dates are handled properly (only one entry per date)
+   * 3. Can delete a booking
+   * Expected output:
+   * - "Booking functionality tests passed" if all operations work
+   * - Error message if any booking operation fails
+   */
   function testBookingFunctionality() {
     console.group("Testing Booking Functionality");
     
-    // Set to a known month/year for testing
+    // Set to known month/year for consistent testing
     currentYear = 2023;
     currentMonth = 0; // January
     clearCalendarRows(tableBody);
     fillCalendarNums(tableBody, currentYear, currentMonth);
     
-    // Find the first day cell
+    // Get first day cell for testing
     const dayCells = document.querySelectorAll(".day_of_month");
     if (dayCells.length === 0) {
       throw new Error("No day cells found for booking tests");
@@ -109,12 +150,12 @@ function runTests() {
     const testDate = "2023-1-1";
     const testReason = "Test booking";
     
-    // Simulate clicking the cell and adding a booking
+    // Test adding a booking
     testCell.click();
     document.getElementById("reason-text").value = testReason;
     document.getElementById("submit_booking").click();
     
-    // Verify the booking was added
+    // Verify booking was added
     if (!testCell.classList.contains("table-info")) {
       throw new Error("Booking did not apply table-info class to cell");
     }
@@ -123,7 +164,7 @@ function runTests() {
       throw new Error(`Booking reason not displayed. Expected "${testReason}", got "${testCell.children[0].textContent}"`);
     }
     
-    // Test duplicate handling
+    // Test duplicate date handling
     const originalLength = bookings.length;
     testCell.click();
     document.getElementById("reason-text").value = "Duplicate test";
@@ -149,10 +190,20 @@ function runTests() {
     console.groupEnd();
   }
   
+  /**
+   * Tests localStorage functionality
+   * Verifies:
+   * 1. Data can be saved to localStorage
+   * 2. Data can be retrieved from localStorage
+   * 3. Retrieved data matches what was stored
+   * Expected output:
+   * - "Local storage tests passed" if all operations work
+   * - Error message if any storage operation fails
+   */
   function testLocalStorage() {
     console.group("Testing Local Storage");
     
-    // Clear any existing data
+    // Start with clean storage
     localStorage.removeItem("save");
     
     // Test saving to localStorage
