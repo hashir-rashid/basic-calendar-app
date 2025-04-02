@@ -1,0 +1,63 @@
+/* Headers */
+#main_title {
+    font-weight: bold;
+    text-align: center;
+}
+
+#month_name_display {
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Date Selectors */
+#set_date_fieldset {
+    width: 100%;
+    text-align: center;
+}
+
+#month_name_dropdown {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 160px;
+}
+
+#input_year {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 18px;
+    width: 160px;
+}
+
+#submit_date {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Table */
+table {
+    border-collapse: collapse; /* Collapse borders */
+    table-layout: fixed;
+    width: 75%;
+    margin-left: auto; 
+    margin-right: auto; /* These margins center the table */
+}
+
+th {
+    border: 1px solid black;
+    padding: 30px;
+    text-align: center;
+}
+
+td {
+    border: 1px solid black;
+    text-align: right;
+    vertical-align: top;
+    height: 100px;
+}
+
+td div {
+    text-align: center;
+}
