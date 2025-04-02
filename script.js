@@ -127,8 +127,15 @@ function clearCalendarRows(table) {
 // Function to select a cell and add a booking reason
 function selectCell(e) {
   // Only process if the clicked element is a cell (not the div within the cell)
-  e.stopPropagation();
-  e.target.classList.add("table-info");
+  if (e.target.nodeName == "DIV") {
+    var cell = e.target.closest("td");
+  }
+
+  else {
+    var cell = e.target;
+  }
+
+  cell.classList.add("table-info");
 
   // Prompt the user for a reason
   promptModal.show();
@@ -136,13 +143,13 @@ function selectCell(e) {
   // If the cancel button is clicked, remove the "table-info" class
   document.getElementById("cancel_booking").onclick = function () {
     // If the cell itself is clicked
-    if (e.target.nodeName == "TD" && e.target.children[0].innerHTML == "") {
-      e.target.classList.remove("table-info");
+    if (cell.nodeName == "TD" && cell.children[0].innerHTML == "") {
+      cell.classList.remove("table-info");
     }
 
     // If the div within the cell is clicked
-    else if (e.target.nodeName == "DIV" && e.target.innerHTML == "") {
-      e.target.classList.remove("table-info");
+    else if (cell.nodeName == "DIV" && cell.innerHTML == "") {
+      cell.classList.remove("table-info");
     }
 
     // Clear the reason text input field
@@ -154,17 +161,17 @@ function selectCell(e) {
   // the array of listings
   document.getElementById("delete_booking").onclick = function () {
     // If the cell itself is clicked
-    if (e.target.nodeName == "TD") {
-      var selectedDate = currentYear + "-" + (currentMonth + 1) + "-" + e.target.childNodes[0].nodeValue.trim();
-      e.target.classList.remove("table-info");
-      e.target.children[0].innerHTML = "";
+    if (cell.nodeName == "TD") {
+      var selectedDate = currentYear + "-" + (currentMonth + 1) + "-" + cell.childNodes[0].nodeValue.trim();
+      cell.classList.remove("table-info");
+      cell.children[0].innerHTML = "";
     }
 
     // If the div within the cell is clicked
-    else if (e.target.nodeName == "DIV") {
-      var selectedDate = currentYear + "-" + (currentMonth + 1) + "-" + e.target.parentNode.childNodes[0].nodeValue.trim();
-      e.target.parentNode.classList.remove("table-info");
-      e.target.innerHTML = "";
+    else if (cell.nodeName == "DIV") {
+      var selectedDate = currentYear + "-" + (currentMonth + 1) + "-" + cell.parentNode.childNodes[0].nodeValue.trim();
+      cell.parentNode.classList.remove("table-info");
+      cell.innerHTML = "";
     }
 
     // Clear the reason text input field
@@ -179,22 +186,19 @@ function selectCell(e) {
   // If the submit button is clicked, add the event reason to the cell,
   // and add the date/reason to the bookings array
   document.getElementById("submit_booking").onclick = function () {
-    if (e.target.nodeName == "TD") {
-      let highlightedCell = e.target.children[0];
+    if (cell.nodeName == "TD") {
+      let highlightedCell = cell.children[0];
       let reason = document.getElementById("reason-text").value;
       
       // Update the slot with the reason
       highlightedCell.innerHTML = reason;
 
       // Append [selected date, reason] to the main bookings array
-      var selectedDate = currentYear + "-" + (currentMonth + 1) + "-" + e.target.childNodes[0].nodeValue.trim();
+      var selectedDate = currentYear + "-" + (currentMonth + 1) + "-" + cell.childNodes[0].nodeValue.trim();
       bookings.push([selectedDate, reason]);
-      console.log(bookings);
 
       // Remove any older entries with similar dates
       removeDuplicates(bookings);
-
-      console.log(bookings);
 
       // Clear the reason text input field
       document.getElementById("reason-text").value = "";
@@ -220,8 +224,6 @@ function removeDuplicates(array) {
 
 // Function to delete an entry from bookings
 function deleteEntry(array, key) {
-  console.log(array, key);
-
   for (let i = 0; i < array.length; i++) {
     if (array[i][0] == key) {
       array.splice(i, 1);
