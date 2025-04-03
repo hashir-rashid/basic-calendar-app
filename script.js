@@ -135,6 +135,7 @@ function selectCell(e) {
     var cell = e.target;
   }
 
+  // Add the "selected" class to clicked cells
   cell.classList.add("table-info");
 
   // Prompt the user for a reason
