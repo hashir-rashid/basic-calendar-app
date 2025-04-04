@@ -39,26 +39,58 @@ let tableBody = document.getElementById("calendar_body");
 updateHeader("month_name_display", currentYear, months[currentMonth]);
 fillCalendarNums(tableBody, currentYear, currentMonth);
 
+// When the left button next to month is clicked, subtract a month
+// and update the display
+document.getElementById("month_left").onclick = function () {
+  let viewMonth = document.getElementById("month_name_dropdown").selectedIndex;
+  if (viewMonth > 0) {
+    document.getElementById("month_name_dropdown").selectedIndex -= 1;
+    updateDisplay(viewMonth - 1, currentYear)
+  }
+}
+
+// When the right button next to month is clicked, add a month
+// and update the display
+document.getElementById("month_right").onclick = function () {
+  let viewMonth = document.getElementById("month_name_dropdown").selectedIndex;
+  if (viewMonth < months.length - 1) {
+    document.getElementById("month_name_dropdown").selectedIndex += 1;
+    updateDisplay(viewMonth + 1, currentYear)
+  }
+}
+
+// When the left button next to year is clicked, subtract a year
+// and update the display
+document.getElementById("year_left").onclick = function () {
+  let viewYear = document.getElementById("input_year").value;
+  if (viewYear > 1969) {
+    document.getElementById("input_year").value -= 1;
+    updateDisplay(currentMonth, viewYear - 1)
+  }
+}
+// When the right button next to year is clicked, add a year
+// and update the display
+document.getElementById("year_right").onclick = function () {
+  let viewYear = Number(document.getElementById("input_year").value);
+  if (viewYear < 2030) {
+    document.getElementById("input_year").value = Number(document.getElementById("input_year").value) + 1;
+    updateDisplay(currentMonth, viewYear + 1)
+  }
+}
+
 // When the "go" button is clicked, update the calendar to match the entered
 // month and year. Update currentYear and currentMonth to match
 document.getElementById("submit_date").onclick = function () {
-  let tempYear = document.getElementById("input_year").value;
   let tempMonth = document.getElementById("month_name_dropdown").selectedIndex;
-
-  // Update the current year and month
-  currentYear = tempYear;
-  currentMonth = tempMonth;
-
-  updateHeader("month_name_display", tempYear, months[tempMonth]);
-  clearCalendarRows(tableBody);
-  fillCalendarNums(tableBody, tempYear, tempMonth);
+  let tempYear = document.getElementById("input_year").value;
+  updateDisplay(tempMonth, tempYear);  
 };
 
 // Setup for the bootstrap modal that prompts for a reason from user
 var promptModal = new bootstrap.Modal(document.getElementById("promptModal"));
 var promptModalEl = document.getElementById('promptModal');
 
-// ====== Function Definitions ======
+/* ====== Function Definitions ====== */
 // Function to update the header
 function updateHeader(id, year, month) {
   document.getElementById(id).innerHTML = month + ", " + year;
@@ -208,6 +240,17 @@ function selectCell(e) {
       storeBookings(bookings);
     }
   };
+}
+
+// Function to update the whole display
+function updateDisplay(tempMonth, tempYear) {
+  // Update the current year and month
+  currentYear = tempYear;
+  currentMonth = tempMonth;
+
+  updateHeader("month_name_display", tempYear, months[tempMonth]);
+  clearCalendarRows(tableBody);
+  fillCalendarNums(tableBody, tempYear, tempMonth);
 }
 
 // Function to remove entries that share the same date
